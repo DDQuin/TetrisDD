@@ -24,7 +24,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                com.ddquin.tetrisdd.Main
+                                com.ddquin.tetrisdd.Launcher
                             </mainClass>
                         </manifest>
                     </archive>
