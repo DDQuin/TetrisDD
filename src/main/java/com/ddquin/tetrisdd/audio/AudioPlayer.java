@@ -1,5 +1,6 @@
 package com.ddquin.tetrisdd.audio;
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -12,7 +13,7 @@ public class AudioPlayer {
         try {
 
 
-            AudioInputStream ais = AudioSystem.getAudioInputStream(getFileFromResourceAsStream(s));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(getFileFromResourceAsStream(s)));
             AudioFormat baseFormat = ais.getFormat();
             AudioFormat decodeFormat = new AudioFormat (
                     AudioFormat.Encoding.PCM_SIGNED,
