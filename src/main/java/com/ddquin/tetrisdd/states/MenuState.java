@@ -18,12 +18,12 @@ public class MenuState extends State {
         bgMusic = new AudioPlayer("music/overworld.mp3");
 
         uiManager = new UIManager(game);
-        game.getMouseManager().setUIManager(uiManager);
+        game.getMouseManager().addMouseAdapter(uiManager);
 
         uiManager.addObject(new UIStartButton(200,200,128,64, () -> {
             bgMusic.stop();
-            game.getMouseManager().setUIManager(null);
             State.setState(game.menuState); //TODO change to game state
+            return true;
         }));
 
     }

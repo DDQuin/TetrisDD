@@ -27,8 +27,8 @@ public class UIStartButton extends UIObject{
     }
 
     @Override
-    public void onClick() {
-        clicker.onClick();
+    public boolean onClick() {
+       return clicker.onClick();
     }
 
 

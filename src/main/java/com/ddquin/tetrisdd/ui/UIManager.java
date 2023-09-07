@@ -1,13 +1,14 @@
 package com.ddquin.tetrisdd.ui;
 
 import com.ddquin.tetrisdd.Game;
+import com.ddquin.tetrisdd.input.MouseAdapter;
 
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 
-public class UIManager {
+public class UIManager implements MouseAdapter {
 
     private Game game;
     private ArrayList<UIObject> objects;
@@ -27,20 +28,6 @@ public class UIManager {
     public void render(Graphics g) {
         for (UIObject o: objects) {
             o.render(g);
-        }
-
-    }
-
-    public void onMouseMove(MouseEvent e) {
-        for (UIObject o: objects) {
-            o.onMouseMove(e);
-        }
-
-    }
-
-    public void onMouseRelease(MouseEvent e) {
-        for (UIObject o: objects) {
-            o.onMouseReleased(e);
         }
 
     }
@@ -69,4 +56,46 @@ public class UIManager {
         objects.remove(o);
     }
 
+    @Override
+    public boolean mouseDragged(MouseEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(MouseEvent e) {
+        boolean shouldRemove = false;
+        for (UIObject o: objects) {
+            if (o.onMouseMove(e)) shouldRemove = true;
+        }
+        return shouldRemove;
+    }
+
+    @Override
+    public boolean mouseClicked(MouseEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean mousePressed(MouseEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(MouseEvent e) {
+        boolean shouldRemove = false;
+        for (UIObject o: objects) {
+            if (o.onMouseReleased(e)) shouldRemove = true;
+        }
+        return shouldRemove;
+    }
+
+    @Override
+    public boolean mouseEntered(MouseEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseExited(MouseEvent e) {
+        return false;
+    }
 }

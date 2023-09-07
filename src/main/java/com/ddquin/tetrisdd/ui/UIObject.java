@@ -23,19 +23,19 @@ public abstract class UIObject {
 
     public abstract void render(Graphics g);
 
-    public abstract void onClick();
+    public abstract boolean onClick();
 
-    public void onMouseMove(MouseEvent e) {
-        if(bounds.contains(e.getX(),e.getY()))
-            hovering = true;
-        else
-            hovering = false;
+    public boolean onMouseMove(MouseEvent e) {
+        hovering = bounds.contains(e.getX(), e.getY());
+        return false;
     }
 
-    public void onMouseReleased(MouseEvent e) {
-        if(hovering)
-            onClick();
-
+    public boolean onMouseReleased(MouseEvent e) {
+        boolean shouldRemove = false;
+        if (hovering) {
+            shouldRemove = onClick();
+        }
+        return shouldRemove;
     }
 
     //Getters and Setters
