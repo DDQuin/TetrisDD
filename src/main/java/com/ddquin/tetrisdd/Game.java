@@ -9,6 +9,7 @@ import com.ddquin.tetrisdd.states.State;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.Arrays;
 
 public class Game implements Runnable {
 

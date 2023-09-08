@@ -35,11 +35,48 @@ public class AudioPlayer {
 
         }
         catch(UnsupportedAudioFileException e) {
+            e.printStackTrace();
             System.out.println("Audio not in correct format, wont be playing");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    public AudioPlayer() {
+
+    }
+
+    public void setSound(String s) {
+        try {
+
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(getFileFromResourceAsStream(s)));
+            AudioFormat baseFormat = ais.getFormat();
+            AudioFormat decodeFormat = new AudioFormat (
+                    AudioFormat.Encoding.PCM_UNSIGNED,
+                    baseFormat.getSampleRate(),
+                    8,
+                    baseFormat.getChannels(),
+                    baseFormat.getChannels() * 1,
+                    baseFormat.getSampleRate(),
+                    false
+            );
+            AudioInputStream dais =
+                    AudioSystem.getAudioInputStream(
+
+                            decodeFormat, ais
+
+                    );
+            clip = AudioSystem.getClip();
+            clip.open(dais);
+
+        }
+        catch(UnsupportedAudioFileException e) {
+            e.printStackTrace();
+            System.out.println("Audio not in correct format, wont be playing");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private InputStream getFileFromResourceAsStream(String fileName) {

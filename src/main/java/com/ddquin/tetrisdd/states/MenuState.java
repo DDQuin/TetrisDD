@@ -17,23 +17,26 @@ public class MenuState extends State {
 
     public MenuState(Game game) {
         super(game);
-        bgMusic = new AudioPlayer("music/overworld.mp3");
+        bgMusic = new AudioPlayer();
 
         uiManager = new UIManager(game);
         game.getMouseManager().addMouseAdapter(uiManager);
         int centerX = game.getWidth() / 2 - BUTTON_WIDTH + BUTTON_WIDTH / 2;
         int centerY = game.getHeight() / 2 - BUTTON_HEIGHT + BUTTON_HEIGHT / 2;
         uiManager.addObject(new UIButton(centerX, centerY - 100,  BUTTON_WIDTH, BUTTON_HEIGHT,
-                5, new Color(3, 3, 211),  Color.ORANGE, "Start", 30,
+                8, new Color(3, 3, 211),  Color.ORANGE, "Start", 40,
                 () -> {
-            bgMusic.stop();
+            bgMusic.setSound("music/blipSelect.wav");
+            bgMusic.play();
             State.setState(game.menuState); //TODO change to game state
             return true;
         }));
 
         uiManager.addObject(new UIButton(centerX, centerY,  BUTTON_WIDTH, BUTTON_HEIGHT,
-                5, new Color(3, 3, 211),  Color.ORANGE, "Quit", 30,
+                8, new Color(3, 3, 211),  Color.ORANGE, "Quit", 40,
                 () -> {
+                    bgMusic.setSound("music/blipSelect.wav");
+                    bgMusic.play();
             System.exit(0);
             return true;
         }));
@@ -56,7 +59,7 @@ public class MenuState extends State {
 
     @Override
     protected void playMusic() {
-        bgMusic.play();
+
     }
 
 }

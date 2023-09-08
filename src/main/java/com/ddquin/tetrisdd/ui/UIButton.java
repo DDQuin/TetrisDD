@@ -53,7 +53,7 @@ public class UIButton extends UIObject{
         g.setColor(hovering ? insideColor.darker() : insideColor);
         g.fillRoundRect((int) x + stroke / 2, (int) y + stroke / 2, width - stroke, height - stroke, width / 5, width / 5);
 
-        g.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        g.setFont(new Font("Segoe UI Semibold", Font.PLAIN, fontSize));
         g.setColor(hovering ? outsideColor.darker() : outsideColor);
         g.drawString(text, (int) x + width / 2 - text.length() * (fontSize / FONT_X_SCALING_FACTOR), (int) y + height / 2 + fontSize / FONT_Y_SCALING_FACTOR);
     }
