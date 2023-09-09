@@ -1,6 +1,7 @@
 package com.ddquin.tetrisdd.audio;
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
+import com.ddquin.tetrisdd.util.Util;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -13,7 +14,7 @@ public class AudioPlayer {
         try {
 
 
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(getFileFromResourceAsStream(s)));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Util.getFileFromResourceAsStream(s)));
             AudioFormat baseFormat = ais.getFormat();
             AudioFormat decodeFormat = new AudioFormat (
                     AudioFormat.Encoding.PCM_SIGNED,
@@ -50,7 +51,7 @@ public class AudioPlayer {
     public void setSound(String s) {
         try {
 
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(getFileFromResourceAsStream(s)));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Util.getFileFromResourceAsStream(s)));
             AudioFormat baseFormat = ais.getFormat();
             AudioFormat decodeFormat = new AudioFormat (
                     AudioFormat.Encoding.PCM_UNSIGNED,
@@ -79,20 +80,6 @@ public class AudioPlayer {
         }
     }
 
-    private InputStream getFileFromResourceAsStream(String fileName) {
-
-        // The class loader that loaded the class
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(fileName);
-
-        // the stream holding the file content
-        if (inputStream == null) {
-            throw new IllegalArgumentException("file not found! " + fileName);
-        } else {
-            return inputStream;
-        }
-
-    }
 
     public void play() {
         if(clip == null) return;

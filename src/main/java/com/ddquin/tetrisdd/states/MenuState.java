@@ -24,7 +24,7 @@ public class MenuState extends State {
         int centerX = game.getWidth() / 2 - BUTTON_WIDTH + BUTTON_WIDTH / 2;
         int centerY = game.getHeight() / 2 - BUTTON_HEIGHT + BUTTON_HEIGHT / 2;
         uiManager.addObject(new UIButton(centerX, centerY - 100,  BUTTON_WIDTH, BUTTON_HEIGHT,
-                8, new Color(3, 3, 211),  Color.ORANGE, "Start", 40,
+                8,  Color.BLACK,  Color.WHITE, "Start", 40,
                 () -> {
             bgMusic.setSound("music/blipSelect.wav");
             bgMusic.play();
@@ -33,7 +33,7 @@ public class MenuState extends State {
         }));
 
         uiManager.addObject(new UIButton(centerX, centerY,  BUTTON_WIDTH, BUTTON_HEIGHT,
-                8, new Color(3, 3, 211),  Color.ORANGE, "Quit", 40,
+                8, Color.BLACK,  Color.WHITE, "Quit", 40,
                 () -> {
                     bgMusic.setSound("music/blipSelect.wav");
                     bgMusic.play();
@@ -52,7 +52,7 @@ public class MenuState extends State {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(new Color(0, 0, 128));
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, game.getWidth(), game.getHeight());
         uiManager.render(g);
     }
