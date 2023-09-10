@@ -26,7 +26,7 @@ public class Util {
         InputStream is = getFileFromResourceAsStream("fonts/arcade.ttf");
         try {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-            return font.deriveFont((float)fontSize);
+            return font.deriveFont((float) fontSize);
         } catch (FontFormatException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

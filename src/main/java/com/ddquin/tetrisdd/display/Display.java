@@ -31,9 +31,9 @@ public class Display {
         frame.setVisible(true);
 
         canvas = new Canvas();
-        canvas.setPreferredSize(new Dimension(width,height));
-        canvas.setMaximumSize(new Dimension(width,height));
-        canvas.setMinimumSize(new Dimension(width,height));
+        canvas.setPreferredSize(new Dimension(width, height));
+        canvas.setMaximumSize(new Dimension(width, height));
+        canvas.setMinimumSize(new Dimension(width, height));
         canvas.setFocusable(false);
 
         frame.add(canvas);
@@ -44,6 +44,8 @@ public class Display {
         return canvas;
     }
 
-    public JFrame getFrame() { return frame; }
+    public JFrame getFrame() {
+        return frame;
+    }
 
 }

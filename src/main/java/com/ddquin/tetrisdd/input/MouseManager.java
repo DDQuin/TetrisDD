@@ -47,85 +47,70 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseDragged(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseDragged(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseMoved(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseMoved(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
 
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseClicked(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseClicked(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             leftPressed = true;
 
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             rightPressed = true;
         }
 
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mousePressed(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mousePressed(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
-
 
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             leftPressed = false;
 
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             rightPressed = false;
         }
 
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseReleased(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseReleased(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
 
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseEntered(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseEntered(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        Set<MouseAdapter> adaptersToRemove = new HashSet<>();
         for (MouseAdapter mouseAdapter : mouseAdapters) {
-            if (mouseAdapter.mouseExited(e)) adaptersToRemove.add(mouseAdapter);
+            mouseAdapter.mouseExited(e);
         }
-        mouseAdapters.removeAll(adaptersToRemove);
     }
 
 }

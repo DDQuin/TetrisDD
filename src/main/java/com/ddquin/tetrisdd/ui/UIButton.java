@@ -1,9 +1,10 @@
 package com.ddquin.tetrisdd.ui;
+
 import com.ddquin.tetrisdd.util.Util;
 
 import java.awt.*;
 
-public class UIButton extends UIObject{
+public class UIButton extends UIObject {
 
     private static final int ARC_SCALING_FACTOR = 5;
 
@@ -38,7 +39,8 @@ public class UIButton extends UIObject{
     }
 
     @Override
-    public void tick() {}
+    public void tick() {
+    }
 
     @Override
     public void render(Graphics g) {
@@ -54,10 +56,12 @@ public class UIButton extends UIObject{
     }
 
     @Override
-    public boolean onClick() {
-       return clicker.onClick();
+    public void onClick() {
+        clicker.onClick(this);
     }
 
 
-
+    public void setText(String text) {
+        this.text = text;
+    }
 }

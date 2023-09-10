@@ -25,8 +25,6 @@ public class Game implements Runnable {
     private BufferStrategy bufferStrategy;
     private Graphics g;
 
-    //States
-    public State menuState;
 
     //Input
     private KeyManager keyManager;
@@ -48,8 +46,7 @@ public class Game implements Runnable {
         display.getFrame().addMouseMotionListener(mouseManager);
         display.getCanvas().addMouseListener(mouseManager);
         display.getCanvas().addMouseMotionListener(mouseManager);
-        menuState = new MenuState(this);
-        State.setState(menuState);
+        State.setState(new MenuState(this));
     }
 
     private void tick() {
@@ -85,7 +82,7 @@ public class Game implements Runnable {
         long timer = 0;
         long ticks = 0;
 
-        while(running) {
+        while (running) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / timePerTick;
             timer += currentTime - lastTime;
@@ -126,7 +123,7 @@ public class Game implements Runnable {
     }
 
     public synchronized void startThread() {
-        if(running) // If the thread is already started, return
+        if (running) // If the thread is already started, return
             return; // as we don't want another thread.
         running = true;
         thread = new Thread(this);
@@ -134,7 +131,7 @@ public class Game implements Runnable {
     }
 
     public synchronized void stopThread() {
-        if(!running) //Same concept but for stopping the thread.
+        if (!running) //Same concept but for stopping the thread.
             return;
         running = false;
         try {

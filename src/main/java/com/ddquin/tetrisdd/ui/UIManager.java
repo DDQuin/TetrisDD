@@ -19,83 +19,62 @@ public class UIManager implements MouseAdapter {
     }
 
     public void tick() {
-        for (UIObject o: objects) {
+        for (UIObject o : objects) {
             o.tick();
         }
 
     }
 
     public void render(Graphics g) {
-        for (UIObject o: objects) {
+        for (UIObject o : objects) {
             o.render(g);
         }
 
     }
 
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public ArrayList<UIObject> getObjects() {
-        return objects;
-    }
-
-    public void setObjects(ArrayList<UIObject> objects) {
-        this.objects = objects;
-    }
 
     public void addObject(UIObject o) {
         objects.add(o);
     }
 
-    public void removeObject(UIObject o) {
-        objects.remove(o);
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
     }
 
     @Override
-    public boolean mouseDragged(MouseEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(MouseEvent e) {
-        boolean shouldRemove = false;
-        for (UIObject o: objects) {
-            if (o.onMouseMove(e)) shouldRemove = true;
+    public void mouseMoved(MouseEvent e) {
+        for (UIObject o : objects) {
+            o.onMouseMove(e);
         }
-        return shouldRemove;
+
     }
 
     @Override
-    public boolean mouseClicked(MouseEvent e) {
-        return false;
+    public void mouseClicked(MouseEvent e) {
+
     }
 
     @Override
-    public boolean mousePressed(MouseEvent e) {
-        return false;
+    public void mousePressed(MouseEvent e) {
+
     }
 
     @Override
-    public boolean mouseReleased(MouseEvent e) {
-        boolean shouldRemove = false;
-        for (UIObject o: objects) {
-            if (o.onMouseReleased(e)) shouldRemove = true;
+    public void mouseReleased(MouseEvent e) {
+        for (UIObject o : objects) {
+            o.onMouseReleased(e);
         }
-        return shouldRemove;
     }
 
     @Override
-    public boolean mouseEntered(MouseEvent e) {
-        return false;
+    public void mouseEntered(MouseEvent e) {
+
     }
 
     @Override
-    public boolean mouseExited(MouseEvent e) {
-        return false;
+    public void mouseExited(MouseEvent e) {
+
     }
 }

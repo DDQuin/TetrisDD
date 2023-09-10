@@ -1,7 +1,10 @@
 package com.ddquin.tetrisdd.audio;
+
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
+
 import com.ddquin.tetrisdd.util.Util;
+
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -16,7 +19,7 @@ public class AudioPlayer {
 
             AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Util.getFileFromResourceAsStream(s)));
             AudioFormat baseFormat = ais.getFormat();
-            AudioFormat decodeFormat = new AudioFormat (
+            AudioFormat decodeFormat = new AudioFormat(
                     AudioFormat.Encoding.PCM_SIGNED,
                     baseFormat.getSampleRate(),
                     16,
@@ -34,8 +37,7 @@ public class AudioPlayer {
             clip = AudioSystem.getClip();
             clip.open(dais);
 
-        }
-        catch(UnsupportedAudioFileException e) {
+        } catch (UnsupportedAudioFileException e) {
             e.printStackTrace();
             System.out.println("Audio not in correct format, wont be playing");
         } catch (Exception e) {
@@ -53,7 +55,7 @@ public class AudioPlayer {
 
             AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(Util.getFileFromResourceAsStream(s)));
             AudioFormat baseFormat = ais.getFormat();
-            AudioFormat decodeFormat = new AudioFormat (
+            AudioFormat decodeFormat = new AudioFormat(
                     AudioFormat.Encoding.PCM_UNSIGNED,
                     baseFormat.getSampleRate(),
                     8,
@@ -71,8 +73,7 @@ public class AudioPlayer {
             clip = AudioSystem.getClip();
             clip.open(dais);
 
-        }
-        catch(UnsupportedAudioFileException e) {
+        } catch (UnsupportedAudioFileException e) {
             e.printStackTrace();
             System.out.println("Audio not in correct format, wont be playing");
         } catch (Exception e) {
@@ -82,14 +83,14 @@ public class AudioPlayer {
 
 
     public void play() {
-        if(clip == null) return;
+        if (clip == null) return;
         stop();
         clip.setFramePosition(0);
         clip.start();
     }
 
     public void stop() {
-        if(clip != null && clip.isRunning()) clip.stop();
+        if (clip != null && clip.isRunning()) clip.stop();
     }
 
     public void close() {

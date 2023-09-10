@@ -4,14 +4,20 @@ import java.awt.event.MouseEvent;
 
 public interface MouseAdapter {
 
-     //Return true if want to remove current mouse adapter
+    //Return true if want to remove current mouse adapter
 
-     boolean mouseDragged(MouseEvent e);
-     boolean mouseMoved(MouseEvent e);
-     boolean mouseClicked(MouseEvent e);
-     boolean mousePressed(MouseEvent e);
-     boolean mouseReleased(MouseEvent e);
-     boolean mouseEntered(MouseEvent e);
-     boolean mouseExited(MouseEvent e);
+    void mouseDragged(MouseEvent e);
+
+    void mouseMoved(MouseEvent e);
+
+    void mouseClicked(MouseEvent e);
+
+    void mousePressed(MouseEvent e);
+
+    void mouseReleased(MouseEvent e);
+
+    void mouseEntered(MouseEvent e);
+
+    void mouseExited(MouseEvent e);
 
 }
