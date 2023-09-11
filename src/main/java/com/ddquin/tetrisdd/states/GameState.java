@@ -16,14 +16,19 @@ public class GameState extends State {
 
     private Difficulty difficulty;
 
+    private String playerName;
+
+    private int playerScore;
+
     private boolean goingMenu;
 
     private static final int BUTTON_WIDTH = 276;
     private static final int BUTTON_HEIGHT = 64;
 
-    public GameState(Game game, Difficulty difficulty) {
+    public GameState(Game game, Difficulty difficulty, String name) {
         super(game);
         goingMenu = false;
+        this.playerName = name;
         this.difficulty = difficulty;
         bgMusic = new AudioPlayer();
 

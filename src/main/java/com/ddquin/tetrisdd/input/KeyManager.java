@@ -2,17 +2,25 @@ package com.ddquin.tetrisdd.input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KeyManager implements KeyListener {
+
+    private List<KeyAdapter> keyAdapters;
 
     private boolean[] keys, justPressed, cantPress;
     public boolean up, down, left, right;
     public boolean aUp, aDown, aLeft, aRight;
 
     public KeyManager() {
+        keyAdapters = new ArrayList<>();
         keys = new boolean[256];
         justPressed = new boolean[keys.length];
         cantPress = new boolean[keys.length];
+    }
+    public void addKeyAdapter(KeyAdapter keyAdapter) {
+        keyAdapters.add(keyAdapter);
     }
 
     public void tick() {
@@ -44,7 +52,9 @@ public class KeyManager implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-
+        for (KeyAdapter keyAdapter : keyAdapters) {
+            keyAdapter.keyTyped(e);
+        }
     }
 
     @Override

@@ -32,9 +32,7 @@ public class ScoreManager {
                 throw new RuntimeException(e);
             }
         }
-        addScore(new PlayerScore("DDquin", 3000));
-        addScore(new PlayerScore("Sod", 100));
-        Scanner myReader = null;
+        Scanner myReader;
         try {
             myReader = new Scanner(new File(SCORE_FILE));
         } catch (FileNotFoundException e) {
@@ -42,7 +40,6 @@ public class ScoreManager {
         }
         while (myReader.hasNextLine()) {
             String currentRecord = myReader.nextLine();
-            System.out.println(currentRecord);
             String[] split = currentRecord.split(",");
             playerScores.add(new PlayerScore(split[0], Integer.parseInt(split[1])));
         }

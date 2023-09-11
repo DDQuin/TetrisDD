@@ -1,14 +1,16 @@
 package com.ddquin.tetrisdd.ui;
 
 import com.ddquin.tetrisdd.Game;
+import com.ddquin.tetrisdd.input.KeyAdapter;
 import com.ddquin.tetrisdd.input.MouseAdapter;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 
-public class UIManager implements MouseAdapter {
+public class UIManager implements MouseAdapter, KeyAdapter {
 
     private Game game;
     private ArrayList<UIObject> objects;
@@ -76,5 +78,12 @@ public class UIManager implements MouseAdapter {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        for (UIObject o : objects) {
+            o.keyTyped(e);
+        }
     }
 }

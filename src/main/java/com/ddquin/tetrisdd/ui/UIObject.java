@@ -2,6 +2,7 @@ package com.ddquin.tetrisdd.ui;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public abstract class UIObject {
@@ -10,6 +11,7 @@ public abstract class UIObject {
     protected int width, height;
     protected Rectangle bounds;
     protected boolean hovering = false;
+
 
     public UIObject(float x, float y, int width, int height) {
         this.x = x;
@@ -25,6 +27,12 @@ public abstract class UIObject {
 
     public abstract void onClick();
 
+    public abstract void onClickOutside();
+
+    public void keyTyped(KeyEvent e) {
+
+    }
+
     public void onMouseMove(MouseEvent e) {
         hovering = bounds.contains(e.getX(), e.getY());
     }
@@ -32,6 +40,8 @@ public abstract class UIObject {
     public void onMouseReleased(MouseEvent e) {
         if (hovering) {
             onClick();
+        } else {
+            onClickOutside();
         }
 
     }

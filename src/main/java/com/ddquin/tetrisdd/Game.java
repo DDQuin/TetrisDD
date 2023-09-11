@@ -102,6 +102,10 @@ public class Game implements Runnable {
         stopThread();
     }
 
+    public int getFPS() {
+        return FPS;
+    }
+
     public KeyManager getKeyManager() {
         return keyManager;
     }

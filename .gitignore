@@ -3,4 +3,4 @@ target/
 .DS_Store
 /.idea/
 *.iml
-TetrisDD_scores.txt.txt
+TetrisDD_scores.txt

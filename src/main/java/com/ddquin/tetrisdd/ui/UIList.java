@@ -69,6 +69,11 @@ public class UIList extends UIObject {
         clicker.onClick(this);
     }
 
+    @Override
+    public void onClickOutside() {
+
+    }
+
 
     public void setTextList(java.util.List<String> text) {
         this.textList = text;

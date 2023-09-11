@@ -60,6 +60,11 @@ public class UIButton extends UIObject {
         clicker.onClick(this);
     }
 
+    @Override
+    public void onClickOutside() {
+
+    }
+
 
     public void setText(String text) {
         this.text = text;
