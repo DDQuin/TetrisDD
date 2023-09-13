@@ -75,7 +75,7 @@ public class MenuState extends State {
     @Override
     public void tick() {
         uiManager.tick();
-        if (goingGame) State.setState(new GameState(game, difficulty, inputField.getText()));
+        if (goingGame) State.setState(new GameState(game, difficulty, inputField.getText(), 12, 22, 30));
 
     }
 
