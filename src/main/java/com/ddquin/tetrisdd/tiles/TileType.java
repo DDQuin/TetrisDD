@@ -6,6 +6,8 @@ public enum TileType {
 
     BACKGROUND(Color.BLACK),
     BORDER(Color.GRAY),
+
+    GROUND(Color.GRAY),
     L_LEFT(Color.BLUE),
     L_RIGHT(Color.ORANGE),
     SNAKE_LEFT(Color.RED),

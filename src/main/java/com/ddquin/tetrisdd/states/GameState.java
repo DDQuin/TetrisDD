@@ -3,6 +3,7 @@ package com.ddquin.tetrisdd.states;
 import com.ddquin.tetrisdd.Game;
 import com.ddquin.tetrisdd.audio.AudioPlayer;
 import com.ddquin.tetrisdd.tiles.Block;
+import com.ddquin.tetrisdd.tiles.BoxBlock;
 import com.ddquin.tetrisdd.tiles.Tile;
 import com.ddquin.tetrisdd.tiles.TileType;
 import com.ddquin.tetrisdd.ui.UIButton;
@@ -11,7 +12,8 @@ import com.ddquin.tetrisdd.ui.UIObject;
 
 import java.awt.*;
 import java.util.Queue;
-import java.util.Stack;
+import java.util.List;
+
 
 public class GameState extends State {
 
@@ -20,6 +22,8 @@ public class GameState extends State {
     private UIManager uiManager;
 
     private Difficulty difficulty;
+
+    private int ticksPassed;
 
     private String playerName;
 
@@ -32,6 +36,10 @@ public class GameState extends State {
     private Block currentBlock;
 
     private Queue<Block> nextBlocks;
+
+    private int ticksKeyDelay;
+
+    private float blockSpeed;
 
     private int boardWidth, boardHeight, tileSize;
 
@@ -46,21 +54,65 @@ public class GameState extends State {
         this.tileSize = tileSize;
         this.playerName = name;
         this.difficulty = difficulty;
+        this.blockSpeed = 5f;
+        this.ticksKeyDelay = game.getFPS()/ 10;
         drawUI();
-
-        tiles = new Tile[boardHeight][boardWidth];
-        for (int y = 0; y < boardHeight; y++) {
-            for (int x = 0; x < boardWidth; x++) {
-                tiles[y][x] = new Tile(x, y, tileSize, TileType.BORDER, 2);
-            }
-        }
+        setupBoard();
 
     }
 
     @Override
     public void tick() {
         uiManager.tick();
+        ticksPassed = (ticksPassed + 1) % game.getFPS();
+        int ticksNeededForMove = (int) ((game.getFPS() - 1) / blockSpeed);
+        if (ticksPassed % ticksKeyDelay == 0) {
+            getInput();
+        }
+        if (ticksPassed % ticksNeededForMove == 0 && ticksPassed != 0) {
+            moveBlockDown();
+        }
+
         if (goingMenu) State.setState(new MenuState(game));
+    }
+
+    private void moveBlockDown() {
+        List<Tile> nextBlockTiles = currentBlock.getTilesDown();
+        boolean isAlreadyInsideAtStart = currentBlock.getTiles().stream().anyMatch(blockTile -> {
+            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+            return boardTile.getTileType() != TileType.BACKGROUND;
+        });
+        if (isAlreadyInsideAtStart) {
+            goingMenu = true;
+            return;
+        }
+        boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
+            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+           // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
+            return boardTile.getTileType() != TileType.BACKGROUND;
+        });
+        //System.out.println(blockWillHitGround);
+        if (!blockWillHitGround) currentBlock.setTiles(nextBlockTiles);
+        if (blockWillHitGround) placeBlock(currentBlock.getTiles());
+    }
+
+    private void getInput() {
+        List<Tile> nextBlockTiles;
+        boolean tilesWillCollide = false;
+        if (game.getKeyManager().aDown) moveBlockDown();
+        if (game.getKeyManager().aLeft) {
+            nextBlockTiles = currentBlock.getTilesLeft();
+        } else if (game.getKeyManager().aRight) {
+            nextBlockTiles = currentBlock.getTilesRight();
+        } else {
+            return;
+        }
+        tilesWillCollide = nextBlockTiles.stream().anyMatch(blockTile -> {
+            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+            return boardTile.getTileType() != TileType.BACKGROUND;
+        });
+        if (!tilesWillCollide) currentBlock.setTiles(nextBlockTiles);
+
     }
 
     @Override
@@ -77,6 +129,8 @@ public class GameState extends State {
                 tiles[y][x].render(g, centerX + x * tileSize, centerY + y * tileSize);
             }
         }
+
+        currentBlock.render(g, centerX, centerY);
 
         uiManager.render(g);
     }
@@ -101,6 +155,41 @@ public class GameState extends State {
                     bgMusic.play();
                     goingMenu = true;
                 }));
+    }
+
+    private void setupBoard() {
+        tiles = new Tile[boardHeight][boardWidth];
+        for (int y = 0; y < boardHeight; y++) {
+            for (int x = 0; x < boardWidth; x++) {
+                TileType tileType = TileType.BACKGROUND;
+                boolean isBorder = y == 0 || x == 0 || x == boardWidth - 1;
+                boolean isGround = y == boardHeight - 1;
+                if (isBorder) tileType = TileType.BORDER;
+                if (isGround) tileType = TileType.GROUND;
+                tiles[y][x] = new Tile(x, y, tileSize, tileType, 2);
+            }
+        }
+
+        spawnBlock();
+
+    }
+
+    private void placeBlock(List<Tile> tilesToPlace) {
+        for (Tile tile: tilesToPlace) {
+            Tile boardTile = tiles[tile.getY()][tile.getX()];
+            boardTile.setTileType(tile.getTileType());
+        }
+        spawnBlock();
+    }
+
+
+
+    private void spawnBlock() {
+        currentBlock = new BoxBlock(5, 1, tileSize);
+    }
+
+    private void gameLost() {
+        goingMenu = true;
     }
 
 }
