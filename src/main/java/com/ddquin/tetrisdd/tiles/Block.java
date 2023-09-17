@@ -14,11 +14,17 @@ public abstract class Block {
 
     protected int tileSize;
 
-    public Block(int x, int y, int tileSize) {
+    protected TileType tileType;
+
+    protected int[][] blockLayout;
+
+    public Block(int x, int y, int tileSize, TileType tileType, int[][] blockLayout) {
         this.x = x;
         this.y = y;
         this.rotation = 0;
         this.tileSize = tileSize;
+        this.tileType = tileType;
+        this.blockLayout = blockLayout;
         setUpBlockTiles();
     }
 
@@ -27,8 +33,22 @@ public abstract class Block {
         //TODO rotate tiles aswell
     }
 
-    abstract void setUpBlockTiles();
+    private void setUpBlockTiles() {
+        tiles = new ArrayList<>();
+        System.out.println(blockLayout.length);
+        for (int yBlock = 0; yBlock < blockLayout.length; yBlock++) {
+            for (int xBlock = 0; xBlock < blockLayout[0].length; xBlock++) {
+                int curTile = blockLayout[yBlock][xBlock];
+                if (curTile == 1) {
+                    tiles.add(new Tile(x + xBlock, y + yBlock, tileSize, tileType, 2));
+                }
+            }
+        }
+    }
 
+    public TileType getTileType() {
+        return tileType;
+    }
 
     public void tick() {
 
@@ -47,6 +67,32 @@ public abstract class Block {
     public List<Tile> getTilesRight() {
         List<Tile> copyTiles = tiles.stream().map(Tile::moveRight).toList();
         return copyTiles;
+    }
+
+    public void moveDown() {
+        List<Tile> copyTiles = tiles.stream().map(Tile::moveDown).toList();
+        setTiles(copyTiles);
+        y = y + 1;
+    }
+
+    public void moveLeft() {
+        List<Tile> copyTiles = tiles.stream().map(Tile::moveLeft).toList();
+        setTiles(copyTiles);
+        x = x + 1;
+    }
+
+    public void moveRight() {
+        List<Tile> copyTiles = tiles.stream().map(Tile::moveRight).toList();
+        setTiles(copyTiles);
+        x = x - 1;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public List<Tile> getTiles() {

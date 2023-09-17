@@ -2,16 +2,13 @@ package com.ddquin.tetrisdd.states;
 
 import com.ddquin.tetrisdd.Game;
 import com.ddquin.tetrisdd.audio.AudioPlayer;
-import com.ddquin.tetrisdd.tiles.Block;
-import com.ddquin.tetrisdd.tiles.BoxBlock;
-import com.ddquin.tetrisdd.tiles.Tile;
-import com.ddquin.tetrisdd.tiles.TileType;
+import com.ddquin.tetrisdd.tiles.*;
 import com.ddquin.tetrisdd.ui.UIButton;
 import com.ddquin.tetrisdd.ui.UIManager;
 import com.ddquin.tetrisdd.ui.UIObject;
 
 import java.awt.*;
-import java.util.Queue;
+import java.util.*;
 import java.util.List;
 
 
@@ -54,8 +51,9 @@ public class GameState extends State {
         this.tileSize = tileSize;
         this.playerName = name;
         this.difficulty = difficulty;
-        this.blockSpeed = 5f;
+        this.blockSpeed = 1f;
         this.ticksKeyDelay = game.getFPS()/ 10;
+        this.nextBlocks = new ArrayDeque<>();
         drawUI();
         setupBoard();
 
@@ -91,19 +89,20 @@ public class GameState extends State {
            // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
             return boardTile.getTileType() != TileType.BACKGROUND;
         });
-        //System.out.println(blockWillHitGround);
-        if (!blockWillHitGround) currentBlock.setTiles(nextBlockTiles);
+        if (!blockWillHitGround) currentBlock.moveDown();
         if (blockWillHitGround) placeBlock(currentBlock.getTiles());
     }
 
     private void getInput() {
         List<Tile> nextBlockTiles;
         boolean tilesWillCollide = false;
+        boolean leftMove = true;
         if (game.getKeyManager().aDown) moveBlockDown();
         if (game.getKeyManager().aLeft) {
             nextBlockTiles = currentBlock.getTilesLeft();
         } else if (game.getKeyManager().aRight) {
             nextBlockTiles = currentBlock.getTilesRight();
+            leftMove = false;
         } else {
             return;
         }
@@ -111,7 +110,13 @@ public class GameState extends State {
             Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
             return boardTile.getTileType() != TileType.BACKGROUND;
         });
-        if (!tilesWillCollide) currentBlock.setTiles(nextBlockTiles);
+        if (!tilesWillCollide) {
+            if (leftMove) {
+                currentBlock.moveLeft();
+            } else {
+                currentBlock.moveRight();
+            }
+        }
 
     }
 
@@ -131,6 +136,12 @@ public class GameState extends State {
         }
 
         currentBlock.render(g, centerX, centerY);
+
+        int i = 0;
+        for (Block nextBlock: nextBlocks) {
+            nextBlock.render(g, centerX + 350, centerY + 350 + (100 * i));
+            i++;
+        }
 
         uiManager.render(g);
     }
@@ -170,6 +181,10 @@ public class GameState extends State {
             }
         }
 
+        //Intilise with 3 random to start
+        nextBlocks.add(getRandomBlock());
+        nextBlocks.add(getRandomBlock());
+        nextBlocks.add(getRandomBlock());
         spawnBlock();
 
     }
@@ -185,7 +200,23 @@ public class GameState extends State {
 
 
     private void spawnBlock() {
-        currentBlock = new BoxBlock(5, 1, tileSize);
+        currentBlock = nextBlocks.remove();
+        nextBlocks.add(getRandomBlock());
+        nextBlocks.forEach(b -> System.out.println(b.getTileType()));
+    }
+
+    private Block getRandomBlock() {
+        Random rand = new Random();
+        Block randomBlock = new BoxBlock(5, 1, tileSize);
+        int block = rand.nextInt(7);
+        if (block == 0) randomBlock = new BoxBlock(5, 1, tileSize);
+        if (block == 1) randomBlock = new LineBlock(5, 1, tileSize);
+        if (block == 2) randomBlock = new LLeftBlock(5, 1, tileSize);
+        if (block == 3) randomBlock = new LRightBlock(5, 1, tileSize);
+        if (block == 4) randomBlock = new SnakeLeftBlock(5, 1, tileSize);
+        if (block == 5) randomBlock = new SnakeRightBlock(5, 1, tileSize);
+        if (block == 6) randomBlock = new TBlock(5, 1, tileSize);
+        return randomBlock;
     }
 
     private void gameLost() {
