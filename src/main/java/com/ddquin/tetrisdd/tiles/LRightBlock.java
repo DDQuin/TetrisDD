@@ -10,4 +10,14 @@ public class LRightBlock extends Block{
         super(x, y, tileSize, TileType.L_RIGHT, LAYOUT);
     }
 
+    public LRightBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.L_RIGHT, LAYOUT, isGhost);
+    }
+
+
+    @Override
+    public Block getGhostBlock() {
+        return new LRightBlock(x, y, tileSize, true);
+    }
+
 }

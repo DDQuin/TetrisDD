@@ -18,6 +18,8 @@ public abstract class Block {
 
     protected int[][] blockLayout;
 
+    protected boolean isGhost;
+
     public Block(int x, int y, int tileSize, TileType tileType, int[][] blockLayout) {
         this.x = x;
         this.y = y;
@@ -25,22 +27,35 @@ public abstract class Block {
         this.tileSize = tileSize;
         this.tileType = tileType;
         this.blockLayout = blockLayout;
+        this.isGhost = false;
         setUpBlockTiles();
     }
 
-    public void nextRotation() {
-        rotation = (rotation + 90) % 360;
-        //TODO rotate tiles aswell
+    public Block(int x, int y, int tileSize, TileType tileType, int[][] blockLayout, boolean isGhost) {
+        this.x = x;
+        this.y = y;
+        this.rotation = 0;
+        this.tileSize = tileSize;
+        this.tileType = tileType;
+        this.blockLayout = blockLayout;
+        this.isGhost = isGhost;
+        setUpBlockTiles();
+    }
+
+    public abstract Block getGhostBlock();
+
+
+    public boolean isGhost() {
+        return isGhost;
     }
 
     private void setUpBlockTiles() {
         tiles = new ArrayList<>();
-        System.out.println(blockLayout.length);
         for (int yBlock = 0; yBlock < blockLayout.length; yBlock++) {
             for (int xBlock = 0; xBlock < blockLayout[0].length; xBlock++) {
                 int curTile = blockLayout[yBlock][xBlock];
                 if (curTile == 1) {
-                    tiles.add(new Tile(x + xBlock, y + yBlock, tileSize, tileType, 2));
+                    tiles.add(new Tile(x + xBlock, y + yBlock, tileSize, tileType, 2, isGhost));
                 }
             }
         }
@@ -52,6 +67,11 @@ public abstract class Block {
 
     public void tick() {
 
+    }
+
+    public List<Tile> getRotatedTiles() {
+        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x, y)).toList();
+        return copyTiles;
     }
 
     public List<Tile> getTilesDown() {
@@ -78,13 +98,19 @@ public abstract class Block {
     public void moveLeft() {
         List<Tile> copyTiles = tiles.stream().map(Tile::moveLeft).toList();
         setTiles(copyTiles);
-        x = x + 1;
+        x = x - 1;
     }
 
     public void moveRight() {
         List<Tile> copyTiles = tiles.stream().map(Tile::moveRight).toList();
         setTiles(copyTiles);
-        x = x - 1;
+        x = x + 1;
+    }
+
+    public void rotateTiles() {
+        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x, y)).toList();
+        setTiles(copyTiles);
+        rotation = (rotation + 90) % 360;
     }
 
     public int getX() {

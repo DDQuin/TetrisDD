@@ -10,4 +10,13 @@ public class SnakeLeftBlock extends Block{
         super(x, y, tileSize, TileType.SNAKE_LEFT, LAYOUT);
     }
 
+    public SnakeLeftBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.SNAKE_LEFT, LAYOUT, isGhost);
+    }
+
+    @Override
+    public Block getGhostBlock() {
+        return new SnakeLeftBlock(x, y, tileSize, true);
+    }
+
 }

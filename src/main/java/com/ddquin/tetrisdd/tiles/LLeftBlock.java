@@ -10,4 +10,13 @@ public class LLeftBlock extends Block{
         super(x, y, tileSize, TileType.L_LEFT, LAYOUT);
     }
 
+    public LLeftBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.L_LEFT, LAYOUT, isGhost);
+    }
+
+    @Override
+    public Block getGhostBlock() {
+        return new LLeftBlock(x, y, tileSize, true);
+    }
+
 }

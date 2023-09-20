@@ -31,6 +31,7 @@ public class GameState extends State {
     private Tile[][] tiles;
 
     private Block currentBlock;
+    private Block ghostBlock;
 
     private Queue<Block> nextBlocks;
 
@@ -70,8 +71,26 @@ public class GameState extends State {
         if (ticksPassed % ticksNeededForMove == 0 && ticksPassed != 0) {
             moveBlockDown();
         }
+        showGhost();
 
         if (goingMenu) State.setState(new MenuState(game));
+    }
+
+    private void showGhost() {
+        ghostBlock = currentBlock.getGhostBlock();
+        boolean reachedMost = false;
+        while (!reachedMost) {
+            List<Tile> nextBlockTiles = ghostBlock.getTilesDown();
+            boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
+                Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+                return boardTile.getTileType() != TileType.BACKGROUND;
+            });
+            if (blockWillHitGround) {
+                reachedMost = true;
+            } else {
+                ghostBlock.moveDown();
+            }
+        }
     }
 
     private void moveBlockDown() {
@@ -98,6 +117,7 @@ public class GameState extends State {
         boolean tilesWillCollide = false;
         boolean leftMove = true;
         if (game.getKeyManager().aDown) moveBlockDown();
+        if (game.getKeyManager().aUp) rotateBlock();
         if (game.getKeyManager().aLeft) {
             nextBlockTiles = currentBlock.getTilesLeft();
         } else if (game.getKeyManager().aRight) {
@@ -136,6 +156,7 @@ public class GameState extends State {
         }
 
         currentBlock.render(g, centerX, centerY);
+        ghostBlock.render(g, centerX, centerY);
 
         int i = 0;
         for (Block nextBlock: nextBlocks) {
@@ -177,7 +198,7 @@ public class GameState extends State {
                 boolean isGround = y == boardHeight - 1;
                 if (isBorder) tileType = TileType.BORDER;
                 if (isGround) tileType = TileType.GROUND;
-                tiles[y][x] = new Tile(x, y, tileSize, tileType, 2);
+                tiles[y][x] = new Tile(x, y, tileSize, tileType, 2, false);
             }
         }
 
@@ -187,6 +208,18 @@ public class GameState extends State {
         nextBlocks.add(getRandomBlock());
         spawnBlock();
 
+    }
+
+    private void rotateBlock() {
+        List<Tile> nextBlockTiles = currentBlock.getRotatedTiles();
+        currentBlock.rotateTiles();
+//        boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
+//            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+//            // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
+//            return boardTile.getTileType() != TileType.BACKGROUND;
+//        });
+//        if (!blockWillHitGround) currentBlock.moveDown();
+//        if (blockWillHitGround) placeBlock(currentBlock.getTiles());
     }
 
     private void placeBlock(List<Tile> tilesToPlace) {
@@ -201,8 +234,9 @@ public class GameState extends State {
 
     private void spawnBlock() {
         currentBlock = nextBlocks.remove();
+        ghostBlock = currentBlock.getGhostBlock();
         nextBlocks.add(getRandomBlock());
-        nextBlocks.forEach(b -> System.out.println(b.getTileType()));
+      //  nextBlocks.forEach(b -> System.out.println(b.getTileType()));
     }
 
     private Block getRandomBlock() {

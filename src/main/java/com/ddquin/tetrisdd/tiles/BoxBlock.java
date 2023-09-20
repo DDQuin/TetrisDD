@@ -12,7 +12,16 @@ public class BoxBlock extends Block{
         super(x, y, tileSize, TileType.BOX, LAYOUT);
     }
 
-//    @Override
+    public BoxBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.BOX, LAYOUT, isGhost);
+    }
+
+    @Override
+    public Block getGhostBlock() {
+        return new BoxBlock(x, y, tileSize, true);
+    }
+
+    //    @Override
     void setUpBlockTiles() {
 //        tiles = new ArrayList<>();
 //        tiles.add(new Tile(x, y, tileSize, TileType.BOX, 2));

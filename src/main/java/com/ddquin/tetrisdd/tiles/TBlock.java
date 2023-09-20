@@ -10,4 +10,14 @@ public class TBlock extends Block{
         super(x, y, tileSize, TileType.T, LAYOUT);
     }
 
+    public TBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.T, LAYOUT, isGhost);
+    }
+
+
+    @Override
+    public Block getGhostBlock() {
+        return new TBlock(x, y, tileSize, true);
+    }
+
 }

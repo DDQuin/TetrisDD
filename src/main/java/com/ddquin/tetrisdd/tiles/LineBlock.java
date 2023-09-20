@@ -9,4 +9,13 @@ public class LineBlock extends Block{
         super(x, y, tileSize, TileType.LINE, LAYOUT);
     }
 
+    public LineBlock(int x, int y, int tileSize, boolean isGhost) {
+        super(x, y, tileSize, TileType.LINE, LAYOUT, isGhost);
+    }
+
+    @Override
+    public Block getGhostBlock() {
+        return new LineBlock(x, y, tileSize, true);
+    }
+
 }
