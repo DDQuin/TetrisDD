@@ -78,6 +78,9 @@ public class GameState extends State {
 
     private void showGhost() {
         ghostBlock = currentBlock.getGhostBlock();
+        for (int i = 0; i < ghostBlock.getRotation(); i++) {
+            ghostBlock.rotateStartGhost();
+        }
         boolean reachedMost = false;
         while (!reachedMost) {
             List<Tile> nextBlockTiles = ghostBlock.getTilesDown();
@@ -212,14 +215,13 @@ public class GameState extends State {
 
     private void rotateBlock() {
         List<Tile> nextBlockTiles = currentBlock.getRotatedTiles();
-        currentBlock.rotateTiles();
-//        boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
-//            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
-//            // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
-//            return boardTile.getTileType() != TileType.BACKGROUND;
-//        });
-//        if (!blockWillHitGround) currentBlock.moveDown();
-//        if (blockWillHitGround) placeBlock(currentBlock.getTiles());
+
+        boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
+            Tile boardTile = tiles[blockTile.getY()][blockTile.getX()];
+            // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
+            return boardTile.getTileType() != TileType.BACKGROUND;
+        });
+        if (!blockWillHitGround) currentBlock.rotateTiles();
     }
 
     private void placeBlock(List<Tile> tilesToPlace) {

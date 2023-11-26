@@ -8,16 +8,22 @@ public class LRightBlock extends Block{
     };
     public LRightBlock(int x, int y, int tileSize) {
         super(x, y, tileSize, TileType.L_RIGHT, LAYOUT);
+        centerX = 1;
+        centerY = 1;
     }
 
     public LRightBlock(int x, int y, int tileSize, boolean isGhost) {
         super(x, y, tileSize, TileType.L_RIGHT, LAYOUT, isGhost);
+        centerX = 1;
+        centerY = 1;
     }
 
 
     @Override
     public Block getGhostBlock() {
-        return new LRightBlock(x, y, tileSize, true);
+        LRightBlock block = new LRightBlock(x, y, tileSize, true);
+        block.setRotation(rotation);
+        return block;
     }
 
 }

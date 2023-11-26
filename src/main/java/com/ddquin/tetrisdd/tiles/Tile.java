@@ -61,10 +61,15 @@ public class Tile {
     }
 
     public Tile rotateClockwise(int xOffset, int yOffset) {
-        int anchoredX = x - xOffset;
-        int anchoredY = y - yOffset;
-        return new Tile(anchoredY + yOffset, -anchoredX + xOffset, size, tileType, insideStroke);
+        // Taken from  https://math.stackexchange.com/questions/2138328/90-degree-counter-clockwise-rotation-around-a-point
+        if (tileType == TileType.BOX) {
+            return new Tile(x, y, size, tileType, insideStroke, isGhost);
+        }
+
+        return new Tile(-(y - yOffset) + xOffset, (x - xOffset) + yOffset, size, tileType, insideStroke, isGhost);
     }
+
+
 
     public Tile moveRight() {
         return new Tile(x + 1, y , size, tileType, insideStroke, isGhost);

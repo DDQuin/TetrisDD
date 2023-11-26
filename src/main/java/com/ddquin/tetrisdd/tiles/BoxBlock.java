@@ -8,6 +8,8 @@ public class BoxBlock extends Block{
             {1, 1},
             {1, 1}
     };
+
+
     public BoxBlock(int x, int y, int tileSize) {
         super(x, y, tileSize, TileType.BOX, LAYOUT);
     }
@@ -18,7 +20,9 @@ public class BoxBlock extends Block{
 
     @Override
     public Block getGhostBlock() {
-        return new BoxBlock(x, y, tileSize, true);
+        BoxBlock block = new BoxBlock(x, y, tileSize, true);
+        block.setRotation(rotation);
+        return block;
     }
 
     //    @Override

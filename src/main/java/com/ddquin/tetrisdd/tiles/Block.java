@@ -14,6 +14,10 @@ public abstract class Block {
 
     protected int tileSize;
 
+    protected int centerX;
+
+    protected int centerY;
+
     protected TileType tileType;
 
     protected int[][] blockLayout;
@@ -29,6 +33,10 @@ public abstract class Block {
         this.blockLayout = blockLayout;
         this.isGhost = false;
         setUpBlockTiles();
+    }
+
+    public int getRotation() {
+        return rotation;
     }
 
     public Block(int x, int y, int tileSize, TileType tileType, int[][] blockLayout, boolean isGhost) {
@@ -47,6 +55,10 @@ public abstract class Block {
 
     public boolean isGhost() {
         return isGhost;
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
     }
 
     private void setUpBlockTiles() {
@@ -69,10 +81,7 @@ public abstract class Block {
 
     }
 
-    public List<Tile> getRotatedTiles() {
-        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x, y)).toList();
-        return copyTiles;
-    }
+
 
     public List<Tile> getTilesDown() {
         List<Tile> copyTiles = tiles.stream().map(Tile::moveDown).toList();
@@ -107,10 +116,20 @@ public abstract class Block {
         x = x + 1;
     }
 
+    public List<Tile> getRotatedTiles() {
+        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x + centerX, y +centerY)).toList();
+        return copyTiles;
+    }
+
     public void rotateTiles() {
-        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x, y)).toList();
+        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x + centerX, y +centerY)).toList();
         setTiles(copyTiles);
-        rotation = (rotation + 90) % 360;
+        rotation = (rotation + 1) % 4;
+    }
+
+    public void rotateStartGhost() {
+        List<Tile> copyTiles = tiles.stream().map(t -> t.rotateClockwise(x + centerX, y +centerY)).toList();
+        setTiles(copyTiles);
     }
 
     public int getX() {
