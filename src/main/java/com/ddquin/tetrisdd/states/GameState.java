@@ -6,6 +6,7 @@ import com.ddquin.tetrisdd.tiles.*;
 import com.ddquin.tetrisdd.ui.UIButton;
 import com.ddquin.tetrisdd.ui.UIManager;
 import com.ddquin.tetrisdd.ui.UIObject;
+import com.ddquin.tetrisdd.ui.UIText;
 
 import java.awt.*;
 import java.util.*;
@@ -17,6 +18,8 @@ public class GameState extends State {
     private AudioPlayer bgMusic;
 
     private UIManager uiManager;
+
+    private UIText scoreText;
 
     private Difficulty difficulty;
 
@@ -40,6 +43,8 @@ public class GameState extends State {
     private float blockSpeed;
 
     private int boardWidth, boardHeight, tileSize;
+
+    private static final int SCORE = 100;
 
     private static final int BUTTON_WIDTH = 276;
     private static final int BUTTON_HEIGHT = 64;
@@ -111,6 +116,7 @@ public class GameState extends State {
            // System.out.println(currentBlock.getTiles().get(0).getY() + " " + boardTile.getY());
             return boardTile.getTileType() != TileType.BACKGROUND;
         });
+        playerScore++;
         if (!blockWillHitGround) currentBlock.moveDown();
         if (blockWillHitGround) placeBlock(currentBlock.getTiles());
     }
@@ -145,6 +151,7 @@ public class GameState extends State {
 
     @Override
     public void render(Graphics g) {
+        scoreText.setText("Score: " + playerScore);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, game.getWidth(), game.getHeight());
 
@@ -190,6 +197,10 @@ public class GameState extends State {
                     bgMusic.play();
                     goingMenu = true;
                 }));
+
+        scoreText = new UIText(centerX + 400, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
+                Color.WHITE, "Score: " + playerScore,   40 );
+        uiManager.addObject(scoreText);
     }
 
     private void setupBoard() {
@@ -229,7 +240,52 @@ public class GameState extends State {
             Tile boardTile = tiles[tile.getY()][tile.getX()];
             boardTile.setTileType(tile.getTileType());
         }
+        List<Integer> lines = getLinesComplete();
+        removeLines(lines);
+        playerScore += scoreFunction(lines.size());
+        System.out.println("Score is " + scoreFunction(lines.size()));
         spawnBlock();
+    }
+
+    private int scoreFunction(int numberOfLines) {
+        return (numberOfLines * (numberOfLines + 1) / 2) * 100;
+    }
+
+    private void removeLines(List<Integer> linesToRemove) {
+        if (linesToRemove.isEmpty()) return;
+        for (int y : linesToRemove) {
+            for (int x = 1; x < boardWidth - 1; x++) {
+                Tile boardTile = tiles[y][x];
+                boardTile.setTileType(TileType.BACKGROUND);
+            }
+        }
+        int topY = linesToRemove.get(0);
+        int removed = linesToRemove.size();
+        System.out.println(topY);
+        System.out.println(removed);
+        for (int y = topY - 1; y > 0; y--) {
+            for (int x = 1; x < boardWidth - 1; x++) {
+                Tile boardTile = tiles[y][x];
+                tiles[y + removed][x].setTileType(boardTile.getTileType());
+                boardTile.setTileType(TileType.BACKGROUND);
+            }
+        }
+    }
+
+    private List<Integer> getLinesComplete() {
+        List<Integer> linesComplete = new ArrayList<>();
+        for (int y = 0; y < boardHeight; y++) {
+            boolean isAllTiles = true;
+            for (int x = 1; x < boardWidth - 1; x++) {
+                Tile boardTile = tiles[y][x];
+                if (boardTile.getTileType() == TileType.BACKGROUND || boardTile.getTileType() == TileType.BORDER || boardTile.getTileType() == TileType.GROUND) {
+                    isAllTiles = false;
+                    break;
+                }
+            }
+            if (isAllTiles) linesComplete.add(y);
+        }
+        return linesComplete;
     }
 
 
