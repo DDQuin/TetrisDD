@@ -21,6 +21,12 @@ public class GameState extends State {
 
     private UIText scoreText;
 
+    private int stepsToMoveDown;
+
+    private int stepsMoved;
+
+    private List<Tile> tilesToMove;
+
     private Difficulty difficulty;
 
     private int ticksPassed;
@@ -42,9 +48,13 @@ public class GameState extends State {
 
     private float blockSpeed;
 
+    private float fallSpeed;
+
     private int boardWidth, boardHeight, tileSize;
 
     private static final int SCORE = 100;
+
+    private List<List<Tile>> tilesToRemove;
 
     private static final int BUTTON_WIDTH = 276;
     private static final int BUTTON_HEIGHT = 64;
@@ -58,8 +68,11 @@ public class GameState extends State {
         this.playerName = name;
         this.difficulty = difficulty;
         this.blockSpeed = 1f;
+        this.fallSpeed = 10f;
         this.ticksKeyDelay = game.getFPS()/ 10;
         this.nextBlocks = new ArrayDeque<>();
+        this.tilesToRemove = new ArrayList<>();
+        this.tilesToMove = new ArrayList<>();
         drawUI();
         setupBoard();
 
@@ -70,6 +83,37 @@ public class GameState extends State {
         uiManager.tick();
         ticksPassed = (ticksPassed + 1) % game.getFPS();
         int ticksNeededForMove = (int) ((game.getFPS() - 1) / blockSpeed);
+        int ticksNeededForFall = (int) ((game.getFPS() - 1) / fallSpeed);
+        int ticksPerBlock = 2;
+        if (!tilesToRemove.isEmpty() && !tilesToRemove.get(0).isEmpty()) {
+            if (ticksPassed % ticksPerBlock == 0) {
+                for (List<Tile> tiles: tilesToRemove) {
+                    tiles.get(0).setTileType(TileType.BACKGROUND);
+                    tiles.remove(0);
+                }
+            }
+            if (tilesToRemove.get(0).isEmpty()) {
+                tilesToRemove.clear();
+                ticksPassed = 1;
+            }
+            return;
+        }
+        while (stepsToMoveDown  > 0) {
+            if (ticksPassed % ticksNeededForFall == 0 && ticksPassed != 0) {
+                List<Tile> newTilestoAdd = new ArrayList<>();
+                for (Tile tile: tilesToMove) {
+                    Tile newTile = tiles[tile.getY()+1][tile.getX()];
+                    newTile.setTileType(tile.getTileType());
+                    newTilestoAdd.add(newTile);
+                    tile.setTileType(TileType.BACKGROUND);
+                }
+                tilesToMove.clear();
+                tilesToMove.addAll(newTilestoAdd);
+                stepsToMoveDown--;
+            }
+            return;
+        }
+
         if (ticksPassed % ticksKeyDelay == 0) {
             getInput();
         }
@@ -248,26 +292,33 @@ public class GameState extends State {
     }
 
     private int scoreFunction(int numberOfLines) {
-        return (numberOfLines * (numberOfLines + 1) / 2) * 100;
+        return (numberOfLines * (numberOfLines + 1) / 2) * SCORE;
     }
 
     private void removeLines(List<Integer> linesToRemove) {
         if (linesToRemove.isEmpty()) return;
+        tilesToRemove.clear();
+        System.out.println(linesToRemove);
         for (int y : linesToRemove) {
+            List<Tile> tilesToRemoveLine = new ArrayList<>();
             for (int x = 1; x < boardWidth - 1; x++) {
-                Tile boardTile = tiles[y][x];
-                boardTile.setTileType(TileType.BACKGROUND);
+                tilesToRemoveLine.add(tiles[y][x]);
             }
+            tilesToRemove.add(tilesToRemoveLine);
         }
         int topY = linesToRemove.get(0);
         int removed = linesToRemove.size();
         System.out.println(topY);
         System.out.println(removed);
+
+        tilesToMove.clear();
+        stepsToMoveDown = removed;
         for (int y = topY - 1; y > 0; y--) {
             for (int x = 1; x < boardWidth - 1; x++) {
-                Tile boardTile = tiles[y][x];
-                tiles[y + removed][x].setTileType(boardTile.getTileType());
-                boardTile.setTileType(TileType.BACKGROUND);
+                tilesToMove.add(tiles[y][x]);
+//                Tile boardTile = tiles[y][x];
+//                tiles[y + removed][x].setTileType(boardTile.getTileType());
+//                boardTile.setTileType(TileType.BACKGROUND);
             }
         }
     }
@@ -300,8 +351,8 @@ public class GameState extends State {
     private Block getRandomBlock() {
         Random rand = new Random();
         Block randomBlock = new BoxBlock(5, 1, tileSize);
-        int block = rand.nextInt(7);
-        if (block == 0) randomBlock = new BoxBlock(5, 1, tileSize);
+        int block = rand.nextInt(1);
+        if (block == 0) randomBlock = new LineBlock( 5, 1, tileSize);
         if (block == 1) randomBlock = new LineBlock(5, 1, tileSize);
         if (block == 2) randomBlock = new LLeftBlock(5, 1, tileSize);
         if (block == 3) randomBlock = new LRightBlock(5, 1, tileSize);
