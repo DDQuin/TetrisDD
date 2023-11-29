@@ -7,6 +7,7 @@ import com.ddquin.tetrisdd.ui.UIButton;
 import com.ddquin.tetrisdd.ui.UIManager;
 import com.ddquin.tetrisdd.ui.UIObject;
 import com.ddquin.tetrisdd.ui.UIText;
+import com.ddquin.tetrisdd.util.ScoreManager;
 
 import java.awt.*;
 import java.util.*;
@@ -21,9 +22,12 @@ public class GameState extends State {
 
     private UIText scoreText;
 
+    private UIText scoreAddedText;
+
     private int stepsToMoveDown;
 
-    private int stepsMoved;
+    private ScoreManager scoreManager;
+
 
     private List<Tile> tilesToMove;
 
@@ -59,7 +63,7 @@ public class GameState extends State {
     private static final int BUTTON_WIDTH = 276;
     private static final int BUTTON_HEIGHT = 64;
 
-    public GameState(Game game, Difficulty difficulty, String name, int boardWidth, int boardHeight, int tileSize) {
+    public GameState(Game game, Difficulty difficulty, String name, int boardWidth, int boardHeight, int tileSize, ScoreManager scoreManager) {
         super(game);
         goingMenu = false;
         this.boardHeight = boardHeight;
@@ -67,12 +71,13 @@ public class GameState extends State {
         this.tileSize = tileSize;
         this.playerName = name;
         this.difficulty = difficulty;
-        this.blockSpeed = 1f;
+        this.blockSpeed = difficulty.speed;
         this.fallSpeed = 10f;
         this.ticksKeyDelay = game.getFPS()/ 10;
         this.nextBlocks = new ArrayDeque<>();
         this.tilesToRemove = new ArrayList<>();
         this.tilesToMove = new ArrayList<>();
+        this.scoreManager = scoreManager;
         drawUI();
         setupBoard();
 
@@ -93,6 +98,7 @@ public class GameState extends State {
                 }
             }
             if (tilesToRemove.get(0).isEmpty()) {
+                scoreAddedText.setText("");
                 tilesToRemove.clear();
                 ticksPassed = 1;
             }
@@ -122,7 +128,7 @@ public class GameState extends State {
         }
         showGhost();
 
-        if (goingMenu) State.setState(new MenuState(game));
+        if (goingMenu) gameLost();
     }
 
     private void showGhost() {
@@ -195,7 +201,7 @@ public class GameState extends State {
 
     @Override
     public void render(Graphics g) {
-        scoreText.setText("Score: " + playerScore);
+        scoreText.setText("Score:" + String.format("%05d",playerScore));
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, game.getWidth(), game.getHeight());
 
@@ -242,8 +248,11 @@ public class GameState extends State {
                     goingMenu = true;
                 }));
 
-        scoreText = new UIText(centerX + 400, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
+        scoreText = new UIText(centerX + 410, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
                 Color.WHITE, "Score: " + playerScore,   40 );
+        scoreAddedText = new UIText(centerX , centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
+                Color.WHITE,   "",   20 );
+        uiManager.addObject(scoreAddedText);
         uiManager.addObject(scoreText);
     }
 
@@ -280,6 +289,8 @@ public class GameState extends State {
     }
 
     private void placeBlock(List<Tile> tilesToPlace) {
+
+
         for (Tile tile: tilesToPlace) {
             Tile boardTile = tiles[tile.getY()][tile.getX()];
             boardTile.setTileType(tile.getTileType());
@@ -287,6 +298,13 @@ public class GameState extends State {
         List<Integer> lines = getLinesComplete();
         removeLines(lines);
         playerScore += scoreFunction(lines.size());
+        if (lines.size() > 0) {
+
+            int centerX = game.getWidth() / 2 - boardWidth * tileSize + boardWidth * tileSize / 2;
+            int centerY = game.getHeight() / 2 - boardHeight * tileSize + boardHeight * tileSize / 2;
+            scoreAddedText.setY(centerY + 550 - (lines.size() * tileSize));
+            scoreAddedText.setText(scoreFunction(lines.size()) + "");
+        }
         System.out.println("Score is " + scoreFunction(lines.size()));
         spawnBlock();
     }
@@ -351,8 +369,8 @@ public class GameState extends State {
     private Block getRandomBlock() {
         Random rand = new Random();
         Block randomBlock = new BoxBlock(5, 1, tileSize);
-        int block = rand.nextInt(1);
-        if (block == 0) randomBlock = new LineBlock( 5, 1, tileSize);
+        int block = rand.nextInt(7);
+        if (block == 0) randomBlock = new BoxBlock( 5, 1, tileSize);
         if (block == 1) randomBlock = new LineBlock(5, 1, tileSize);
         if (block == 2) randomBlock = new LLeftBlock(5, 1, tileSize);
         if (block == 3) randomBlock = new LRightBlock(5, 1, tileSize);
@@ -363,7 +381,8 @@ public class GameState extends State {
     }
 
     private void gameLost() {
-        goingMenu = true;
+        scoreManager.addScore(playerName, playerScore);
+        State.setState(new MenuState(game));
     }
 
 }

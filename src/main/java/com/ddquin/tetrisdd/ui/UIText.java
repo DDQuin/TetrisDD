@@ -52,4 +52,6 @@ public class UIText extends UIObject {
     public void setText(String text) {
         this.text = text;
     }
+
+
 }

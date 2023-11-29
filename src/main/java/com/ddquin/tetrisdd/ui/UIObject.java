@@ -21,6 +21,14 @@ public abstract class UIObject {
         bounds = new Rectangle((int) x, (int) y, width, height);
     }
 
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
     public abstract void tick();
 
     public abstract void render(Graphics g);

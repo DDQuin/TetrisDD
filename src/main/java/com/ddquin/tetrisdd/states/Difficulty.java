@@ -5,14 +5,17 @@ import java.util.List;
 
 public enum Difficulty {
 
-    EASY("Easy"),
-    MEDIUM("Medium"),
-    HARD("Hard");
+    EASY("Easy", 1f),
+    MEDIUM("Medium", 2f),
+    HARD("Hard", 4f);
 
     String display;
 
-    Difficulty(String display) {
+    float speed;
+
+    Difficulty(String display, float speed) {
         this.display = display;
+        this.speed =speed;
     }
 
     public static Difficulty getNextDifficulty(Difficulty difficulty) {

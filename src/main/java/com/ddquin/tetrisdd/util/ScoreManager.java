@@ -50,9 +50,9 @@ public class ScoreManager {
         return playerScores;
     }
 
-    public void addScore(PlayerScore playerScore) {
+    public void addScore(String name, int score) {
         try(FileWriter fileWriter = new FileWriter(SCORE_FILE, true)) {
-            fileWriter.append(playerScore.name + "," + playerScore.score + "\n");
+            fileWriter.append(name + "," + score + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
