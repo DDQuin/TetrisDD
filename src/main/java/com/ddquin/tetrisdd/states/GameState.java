@@ -3,10 +3,7 @@ package com.ddquin.tetrisdd.states;
 import com.ddquin.tetrisdd.Game;
 import com.ddquin.tetrisdd.audio.AudioPlayer;
 import com.ddquin.tetrisdd.tiles.*;
-import com.ddquin.tetrisdd.ui.UIButton;
-import com.ddquin.tetrisdd.ui.UIManager;
-import com.ddquin.tetrisdd.ui.UIObject;
-import com.ddquin.tetrisdd.ui.UIText;
+import com.ddquin.tetrisdd.ui.*;
 import com.ddquin.tetrisdd.util.ScoreManager;
 
 import java.awt.*;
@@ -19,6 +16,16 @@ public class GameState extends State {
     private AudioPlayer bgMusic;
 
     private UIManager uiManager;
+
+    private UIText finishText;
+
+    private UIContainer container;
+
+    private UIButton playAgain;
+
+    private UIButton goMenu;
+
+    private UIButton menuButton;
 
     private UIText scoreText;
 
@@ -41,6 +48,8 @@ public class GameState extends State {
 
     private boolean goingMenu;
 
+    private boolean playingAgain;
+
     private Tile[][] tiles;
 
     private Block currentBlock;
@@ -51,6 +60,8 @@ public class GameState extends State {
     private int ticksKeyDelay;
 
     private float blockSpeed;
+
+    private boolean gameOver;
 
     private float fallSpeed;
 
@@ -66,6 +77,8 @@ public class GameState extends State {
     public GameState(Game game, Difficulty difficulty, String name, int boardWidth, int boardHeight, int tileSize, ScoreManager scoreManager) {
         super(game);
         goingMenu = false;
+        playingAgain = false;
+        gameOver = false;
         this.boardHeight = boardHeight;
         this.boardWidth = boardWidth;
         this.tileSize = tileSize;
@@ -86,6 +99,11 @@ public class GameState extends State {
     @Override
     public void tick() {
         uiManager.tick();
+        if (goingMenu) gameLost();
+        if (playingAgain) resetGame();
+        if (gameOver) {
+            return;
+        }
         ticksPassed = (ticksPassed + 1) % game.getFPS();
         int ticksNeededForMove = (int) ((game.getFPS() - 1) / blockSpeed);
         int ticksNeededForFall = (int) ((game.getFPS() - 1) / fallSpeed);
@@ -104,6 +122,7 @@ public class GameState extends State {
             }
             return;
         }
+        //find
         while (stepsToMoveDown  > 0) {
             if (ticksPassed % ticksNeededForFall == 0 && ticksPassed != 0) {
                 List<Tile> newTilestoAdd = new ArrayList<>();
@@ -128,7 +147,7 @@ public class GameState extends State {
         }
         showGhost();
 
-        if (goingMenu) gameLost();
+
     }
 
     private void showGhost() {
@@ -158,7 +177,9 @@ public class GameState extends State {
             return boardTile.getTileType() != TileType.BACKGROUND;
         });
         if (isAlreadyInsideAtStart) {
-            goingMenu = true;
+            scoreManager.addScore(playerName, playerScore);
+            drawEndDialog();
+            gameOver = true;
             return;
         }
         boolean blockWillHitGround = nextBlockTiles.stream().anyMatch(blockTile -> {
@@ -232,6 +253,40 @@ public class GameState extends State {
 
     }
 
+    private void drawEndDialog() {
+        menuButton.hide();
+        int centerX = game.getWidth() / 2 - BUTTON_WIDTH + BUTTON_WIDTH / 2;
+        int centerY = game.getHeight() / 2 - BUTTON_HEIGHT + BUTTON_HEIGHT / 2;
+        finishText = new UIText(centerX, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
+                Color.WHITE, playerName + " You finished" +
+                "\n with a score of \n" + playerScore ,   20 );
+
+        goMenu = new UIButton(centerX - 400, centerY - 100, BUTTON_WIDTH + 40, BUTTON_HEIGHT,
+                8, Color.BLACK, Color.WHITE, "Go Back", 40,
+                (UIObject uiButton) -> {
+                    bgMusic.setSound("music/blipSelect.wav");
+                    bgMusic.play();
+                    goingMenu = true;
+                });
+
+        playAgain = new UIButton(centerX - 400, centerY - 100, BUTTON_WIDTH + 40, BUTTON_HEIGHT,
+                8, Color.BLACK, Color.WHITE, "Play", 40,
+                (UIObject uiButton) -> {
+                    bgMusic.setSound("music/blipSelect.wav");
+                    bgMusic.play();
+                    playingAgain = true;
+                });
+        container = new UIContainer(centerX, centerY - 200, 400, 400, 2, Color.BLACK, Color.WHITE);
+        uiManager.addObject(container);
+        uiManager.addObject(finishText);
+        uiManager.addObject(goMenu);
+        uiManager.addObject(playAgain);
+
+        container.addObject(finishText);
+        container.addObject(goMenu);
+        container.addObject(playAgain);
+    }
+
     private void drawUI() {
         bgMusic = new AudioPlayer();
 
@@ -240,13 +295,15 @@ public class GameState extends State {
 
         int centerX = game.getWidth() / 2 - BUTTON_WIDTH + BUTTON_WIDTH / 2;
         int centerY = game.getHeight() / 2 - BUTTON_HEIGHT + BUTTON_HEIGHT / 2;
-        uiManager.addObject(new UIButton(centerX - 400, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
+
+        menuButton = new UIButton(centerX - 400, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
                 8, Color.BLACK, Color.WHITE, "Menu", 40,
                 (UIObject uiButton) -> {
                     bgMusic.setSound("music/blipSelect.wav");
                     bgMusic.play();
                     goingMenu = true;
-                }));
+                });
+        uiManager.addObject(menuButton);
 
         scoreText = new UIText(centerX + 410, centerY - 100, BUTTON_WIDTH, BUTTON_HEIGHT,
                 Color.WHITE, "Score: " + playerScore,   40 );
@@ -254,6 +311,8 @@ public class GameState extends State {
                 Color.WHITE,   "",   20 );
         uiManager.addObject(scoreAddedText);
         uiManager.addObject(scoreText);
+
+
     }
 
     private void setupBoard() {
@@ -381,8 +440,11 @@ public class GameState extends State {
     }
 
     private void gameLost() {
-        scoreManager.addScore(playerName, playerScore);
         State.setState(new MenuState(game));
+    }
+
+    private void resetGame() {
+        State.setState(new GameState(game, difficulty, playerName, boardWidth, boardHeight, tileSize, scoreManager));
     }
 
 }

@@ -3,6 +3,8 @@ package com.ddquin.tetrisdd.ui;
 import com.ddquin.tetrisdd.util.Util;
 
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class UIText extends UIObject {
 
@@ -36,7 +38,12 @@ public class UIText extends UIObject {
 
         g.setColor(outsideColor);
         g.setFont(font);
-        g.drawString(text, (int) x + width / 2 - text.length() * (fontSize / FONT_X_SCALING_FACTOR), (int) y + height / 2 + fontSize / FONT_Y_SCALING_FACTOR);
+        java.util.List<String> strings = text.lines().toList();
+        for (int i = 0; i < strings.size(); i++) {
+            String string = strings.get(i);
+            g.drawString(string, (int) x + width / 2 - string.length() * (fontSize / FONT_X_SCALING_FACTOR), (int) y + height / 2 + fontSize / FONT_Y_SCALING_FACTOR + i * 40);
+        }
+
     }
 
     @Override

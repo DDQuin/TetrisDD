@@ -29,7 +29,7 @@ public class UIManager implements MouseAdapter, KeyAdapter {
 
     public void render(Graphics g) {
         for (UIObject o : objects) {
-            o.render(g);
+            o.renderTemplate(g);
         }
 
     }
