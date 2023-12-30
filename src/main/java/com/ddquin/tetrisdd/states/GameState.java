@@ -375,7 +375,6 @@ public class GameState extends State {
     private void removeLines(List<Integer> linesToRemove) {
         if (linesToRemove.isEmpty()) return;
         tilesToRemove.clear();
-        System.out.println(linesToRemove);
         for (int y : linesToRemove) {
             List<Tile> tilesToRemoveLine = new ArrayList<>();
             for (int x = 1; x < boardWidth - 1; x++) {
@@ -385,8 +384,6 @@ public class GameState extends State {
         }
         int topY = linesToRemove.get(0);
         int removed = linesToRemove.size();
-        System.out.println(topY);
-        System.out.println(removed);
 
         tilesToMove.clear();
         stepsToMoveDown = removed;
