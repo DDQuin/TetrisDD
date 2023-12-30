@@ -364,7 +364,6 @@ public class GameState extends State {
             scoreAddedText.setY(centerY + 550 - (lines.size() * tileSize));
             scoreAddedText.setText(scoreFunction(lines.size()) + "");
         }
-        System.out.println("Score is " + scoreFunction(lines.size()));
         spawnBlock();
     }
 
